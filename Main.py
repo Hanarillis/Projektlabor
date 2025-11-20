@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 from openai import OpenAI
 import os
 
@@ -13,37 +14,57 @@ response = client.chat.completions.create(
 )
 print(response.choices[0].message.content)'''
 
-root = tk.Tk()
-root.title("DnD NPC Generator")
+def main():
+    app = Application()
+    app.mainloop()
 
-def add_to_list(event=None):
-    text = entry.get()
-    if text:
-        text_list.insert(tk.END, text)
-        entry.delete(0, tk.END)
+class Application(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.title("DnD NPC Generator")
 
-root.columnconfigure(0, weight=1)
-root.rowconfigure(0, weight=1)
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1)
 
-frame = tk.Frame(root)
-frame.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
+        frame = Inputform(self)
+        frame.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
 
-frame.columnconfigure(0, weight=1)
-frame.rowconfigure(1, weight=1)
+        frame2 = Inputform(self)
+        frame2.grid(row=0, column=1, sticky="nsew", padx=5, pady=5)
 
-entry = tk.Entry(frame)
-entry.grid(row=0, column=0, sticky="ew")
+        
 
-entry.bind("<Return>", add_to_list)
+class Inputform(ttk.Frame):
+    def __init__(self, parent):
+        super().__init__(parent)
 
-entry_btn = tk.Button(frame, text="Add", command=add_to_list)
-entry_btn.grid(row=0, column=1)
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(1, weight=1)
 
-text_list = tk.Listbox(frame)
-text_list.grid(row=1, column=0, columnspan=2, sticky="nsew")
+        self.entry = tk.Entry(self)
+        self.entry.grid(row=0, column=0, sticky="ew")
 
-#label = tk.Label(master=frame, text="hello world!")
-#label.place(x=50, y=30)
+        self.entry.bind("<Return>", self.add_to_list)
+
+        self.entry_btn = tk.Button(self, text="Add", command=self.add_to_list)
+        self.entry_btn.grid(row=0, column=1)
+
+        self.entry_btn2 = tk.Button(self, text="Clear", command=self.clear_list)
+        self.entry_btn2.grid(row=0, column=2)
+
+        self.text_list = tk.Listbox(self)
+        self.text_list.grid(row=1, column=0, columnspan=3, sticky="nsew")
+    
+    def add_to_list(self, event=None):
+        text = self.entry.get()
+        if text:
+            self.text_list.insert(tk.END, text)
+            self.entry.delete(0, tk.END)    
+
+    def clear_list(self):
+        self.text_list.delete(0, tk.END) 
 
 
-root.mainloop()
+if __name__ == "__main__": 
+    main()
+    
